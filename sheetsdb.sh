@@ -8,14 +8,15 @@
 #  sheetsdb export [csv|tsv] SHEET
 #  sheetsdb export [pdf|zip|ods]
 # 
+# For GVIZ_QUERY, refer to the Google Sheets query language reference:
+# - https://developers.google.com/chart/interactive/docs/querylanguage
+# 
+#
 # Sheetsdb is motivated by the pain in setting up database servers even for the
 # simplest data collection tasks, and inspired by several blog posts:
 # - http://acrl.ala.org/techconnect/?p=4001
 # - http://blog.ouseful.info/2009/05/18/using-google-spreadsheets-as-a-databace-with-the-google-visualisation-api-query-language/
 # - https://mashe.hawksey.info/2014/07/google-sheets-as-a-database-insert-with-apps-script-using-postget-methods-with-ajax-example/
-# 
-# The Google Sheets query language reference:
-# - https://developers.google.com/chart/interactive/docs/querylanguage
 #
 # Author: Jaeho Shin <netj@cs.stanford.edu>
 # Created: 2015-01-28
