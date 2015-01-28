@@ -5,6 +5,8 @@
 #  sheetsdb create SHEET COLUMN...
 #  sheetsdb insert SHEET COLUMN=VALUE...
 #  sheetsdb query  SHEET [GVIZ_QUERY]
+#  sheetsdb export [csv|tsv] SHEET
+#  sheetsdb export [pdf|zip|ods]
 # 
 # Sheetsdb is motivated by the pain in setting up database servers even for the
 # simplest data collection tasks, and inspired by several blog posts:
@@ -162,9 +164,14 @@ case $Mode in
 
     e|export)
         args=()
-        Format=${1:-tsv}
+        Format=${1:-zip}; shift || true
         case $Format in
             tsv|csv)
+                # sheet name
+                [[ $# -gt 0 ]] || usage "SHEET to export must be specified"
+                Sheet=$1; shift
+                # FIXME this does not work
+                args+=( sheet="$Sheet" )
                 download=false
                 ;;
             zip|ods|pdf)
