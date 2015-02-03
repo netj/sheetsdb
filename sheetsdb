@@ -43,8 +43,8 @@ usage() {
 
 # default settings
 : \
-    ${SHEETSDB_READ_KEY:?should be set to the id of the Google Sheets document visible to anyone via link} \
-    ${SHEETSDB_WRITE_KEY:?should be set to the id of the Google Apps Script deployed as a web-app} \
+    ${SHEETSDB_KEY_READ:?should be set to the id of the Google Sheets document visible to anyone via link} \
+    ${SHEETSDB_KEY_WRITE:?should be set to the id of the Google Apps Script deployed as a web-app} \
     ${SHEETSDB_HEADER_ROW:=1} \
     ${SHEETSDB_OUTPUT_FORMAT:=csv} \
     ${SHEETSDB_USING_OLD_SHEET:=} \
@@ -100,7 +100,7 @@ case $Mode in
         done
         args+=( "columns=${columns#,}" )
 
-        updateURL="https://script.google.com/macros/s/$SHEETSDB_WRITE_KEY/exec"
+        updateURL="https://script.google.com/macros/s/$SHEETSDB_KEY_WRITE/exec"
         getURL "$updateURL" "${args[@]}"
         ;;
 
@@ -125,7 +125,7 @@ case $Mode in
             esac
         done
 
-        updateURL="https://script.google.com/macros/s/$SHEETSDB_WRITE_KEY/exec"
+        updateURL="https://script.google.com/macros/s/$SHEETSDB_KEY_WRITE/exec"
         getURL "$updateURL" "${args[@]}"
         ;;
 
@@ -160,12 +160,12 @@ case $Mode in
         esac
 
         # send a request to Google Docs
-        gvizURL="https://docs.google.com/spreadsheets/d/$SHEETSDB_READ_KEY/gviz/tq"
+        gvizURL="https://docs.google.com/spreadsheets/d/$SHEETSDB_KEY_READ/gviz/tq"
         if [[ -n "$SHEETSDB_USING_OLD_SHEET" ]]; then
             # fallback to old URL
             # See: https://code.google.com/p/google-visualization-api-issues/issues/detail?id=1476
             gvizURL="https://spreadsheets.google.com/tq"
-            args+=( key="$SHEETSDB_READ_KEY" )
+            args+=( key="$SHEETSDB_KEY_READ" )
         fi
         getURL "$gvizURL" "${args[@]}"
         ;;
@@ -189,7 +189,7 @@ case $Mode in
                 error "$Format: Unrecognized export format"
         esac
         args+=( format="$Format" )
-        exportURL="https://docs.google.com/spreadsheets/d/$SHEETSDB_READ_KEY/export"
+        exportURL="https://docs.google.com/spreadsheets/d/$SHEETSDB_KEY_READ/export"
         if $download; then
             filename="${SHEETSDB_EXPORT_FILE:-sheetsdb-export-$(date +%Y%m%d_%H%M%S).$Format}"
             downloadURL "$filename" "$exportURL" "${args[@]}"
