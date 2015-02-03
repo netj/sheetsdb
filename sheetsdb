@@ -2,7 +2,7 @@
 # sheetsdb -- a script for accessing Google Sheets as a database
 # 
 # Usage:
-#  sheetsdb create SHEET COLUMN...
+#  sheetsdb create SHEET COLUMN:TYPE...
 #  sheetsdb insert SHEET COLUMN=VALUE...
 #  sheetsdb query  SHEET [GVIZ_QUERY]
 #  sheetsdb export [csv|tsv] SHEET
@@ -11,6 +11,12 @@
 # For GVIZ_QUERY, refer to the Google Sheets query language reference:
 # - https://developers.google.com/chart/interactive/docs/querylanguage
 # 
+# Valid TYPEs for columns are:
+# - text or string
+# - int or number
+# - float or double
+# - datetime, date, time, or any SimpleDateFormat string
+#   See: http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
 #
 # Sheetsdb is motivated by the pain in setting up database servers even for the
 # simplest data collection tasks, and inspired by several blog posts:
@@ -34,10 +40,6 @@ usage() {
     usage "$0"
     exit 1
 }
-
-# Working with a sample sheet
-SHEETSDB_READ_KEY=1y212-CLet7mHPYmFhDtDBO1xob-UNXlZpbbV99PMKhk
-SHEETSDB_WRITE_KEY=AKfycbxbZhav5_AHMEAW-3g7uSe0hqaEgi7Uiay4n-RAt69DOY-t0ixW
 
 # default settings
 : \
@@ -83,15 +85,20 @@ case $Mode in
         Sheet=$1; shift
         args+=( sheet="$Sheet" )
         # column names and types
+        columns=
         for arg; do
             case $arg in
                 *:*)
-                    args+=( ".$arg" )
+                    name=${arg%%:*}
+                    type=${arg#*:}
+                    args+=( "column.$name=$type" )
+                    columns+=",$name"
                     ;;
                 *)
                     error "$arg: Unrecognized argument to create"
             esac
         done
+        args+=( "columns=${columns#,}" )
 
         updateURL="https://script.google.com/macros/s/$SHEETSDB_WRITE_KEY/exec"
         getURL "$updateURL" "${args[@]}"
